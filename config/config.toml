@@ -1,0 +1,22 @@
+port = 8199
+
+# Logger.
+[logger]
+    Path        = "/tmp/log/helmOnap"
+    Level       = "all"
+    Stdout      = true
+
+# SSHConfig
+[SSHConfig]
+    User    = "root"
+    Password = ""
+    PrivateKey = "/root/.ssh/id_rsa"
+# Pkg
+[Pkg]
+    PkgPath = "/root/helmOnap/11/"
+
+[Masters]
+    Master = ["172.18.10.101", "172.18.10.102", "172.18.10.103"]
+
+[Nodes]
+    Node = ["172.18.10.101", "172.18.10.102", "172.18.10.103"]
