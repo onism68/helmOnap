@@ -20,3 +20,18 @@ port = 8199
 
 [Nodes]
     Node = ["172.18.10.101", "172.18.10.102", "172.18.10.103"]
+
+[compiler]
+    name     = "helmOnap"
+    mod      = "none"
+    cgo      = 0
+    arch     = "amd64"
+#    system   = "linux,windows,darwin"
+    system   = "linux"
+    output   = ""
+    path     = "./bin"
+    extra    = "-ldflags \"-s -w\""
+    # 自定义编译时内置变量
+    [compiler.VarMap]
+        author = "zhangjg"
+        email  = "onism68@gmail.com"
