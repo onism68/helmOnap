@@ -2,20 +2,22 @@ package utils
 
 import (
 	"bufio"
+	"bytes"
 	"github.com/gogf/gf/os/glog"
 	"github.com/onism68/helmOnap/vars"
 	"io"
+	"os"
 	"os/exec"
 )
 
 func CmdInLocal(name string, args []string) {
-	CmdsInLocal("echo", []string{"test"}, []string{name}, [][]string{args})
+	CmdsInLocal(name, args, nil, nil)
 }
 
 func CmdsInLocal(name string, args []string, extraNames []string, extraArgs [][]string) {
 	cmdr := exec.Command(name, args...)
 	cmdr.Dir = vars.WorkSpace
-	glog.Info(name, args)
+	glog.Printf("name %s, args %s", name, args)
 	pipeReader, _ := cmdr.StdoutPipe()
 	if err := cmdr.Start(); err != nil {
 		glog.Errorf("some error : %s", err.Error())
@@ -30,6 +32,22 @@ func CmdsInLocal(name string, args []string, extraNames []string, extraArgs [][]
 			CmdsInLocal(extra, extraArgs[index], nil, nil)
 		}
 	}
+}
+
+//CmdToString is exec on os , return result
+func CmdToString(name string, arg ...string) string {
+	glog.Infof("[os]exec cmd is : %s, %s", name, arg)
+	cmd := exec.Command(name, arg[:]...)
+	cmd.Stdin = os.Stdin
+	var b bytes.Buffer
+	cmd.Stdout = &b
+	cmd.Stderr = &b
+	err := cmd.Run()
+	if err != nil {
+		glog.Errorf("[os]os call error. %s", err)
+		return ""
+	}
+	return b.String()
 }
 
 //Cmd is in host exec cmd
@@ -113,4 +131,11 @@ func (ss *SSH) CmdAsync(host string, cmd string) error {
 	<-doneerr
 	<-doneout
 	return nil
+}
+
+func (ss *SSH) CmdInMaster(args string) {
+	err := ss.CmdAsync(vars.MasterIp, args)
+	if err != nil {
+		glog.Error(err)
+	}
 }
