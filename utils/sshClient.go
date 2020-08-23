@@ -59,7 +59,6 @@ func (ss *SSH) Connect(host string) (*ssh.Session, error) {
 		ssh.TTY_OP_ISPEED: 14400, // input speed = 14.4kbaud
 		ssh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
 	}
-
 	if err := session.RequestPty("xterm", 80, 40, modes); err != nil {
 		return nil, err
 	}

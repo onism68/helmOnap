@@ -14,7 +14,7 @@ func TestSSH_Connect(t *testing.T) {
 		PkPassword: "",
 		Timeout:    nil,
 	}
-	conn, err := ssh.Connect("172.21.80.101")
+	conn, err := ssh.Connect("172.21.80.102")
 	if err != nil {
 		glog.Error(err.Error())
 	}
