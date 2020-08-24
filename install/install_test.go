@@ -26,9 +26,26 @@ func Test_runInNode(t *testing.T) {
 		PkPassword: "",
 		Timeout:    nil,
 	}
-
+	//nodes := []string{"172.21.80.101", "172.21.80.102"}
+	//list := getNodesSource(nodes, vars.WorkSpace+"docker/", "tar")
+	//DockerLoader(nodes, list)
+	//return
 	//runInNode([]string{"172.21.80.101"}, CdCom(vars.WorkSpace))
 
+	t1 := sshMaster.CmdInServer(vars.MasterIp, "cd workSpaceTmp/docker && ls")
+	//fmt.Println(string(t1))
+	matchString, err2 := gregex.MatchAll(`([\S]+\.tar)`, t1)
+	if err2 != nil {
+		panic(err2)
+	}
+	//fmt.Println(matchString)
+	var fileList []string
+	for _, item := range matchString {
+		//glog.Info(index)
+		fileList = append(fileList, string(item[0]))
+	}
+	fmt.Println(fileList)
+	return
 	//runInNode([]string{"172.21.80.101"}, WgetCom("172.21.80.1:8199/main.exe"))
 
 	// 检查tiller服务是否就绪
@@ -48,6 +65,6 @@ func Test_runInNode(t *testing.T) {
 			panic(err)
 		}
 	}
-	fmt.Println("yijiuxu")
+	fmt.Println("已就绪")
 	fmt.Println(readyList)
 }

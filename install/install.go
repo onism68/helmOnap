@@ -88,7 +88,7 @@ func RunInstall() {
 	// 创建namespace
 	sshMaster.CmdInMaster("kubectl create namespace onap")
 
-	sshMaster.CmdInMaster(fmt.Sprintf("docker load -i %s", vars.WorkSpace+"docker/docker.tar || true"))
+	//sshMaster.CmdInMaster(fmt.Sprintf("docker load -i %s", vars.WorkSpace+"docker/docker.tar || true"))
 	//sshMaster.CmdInMaster(Chmod("+x", vars.WorkSpace + "docker/docker.sh"))
 	//sshMaster.CmdInMaster(fmt.Sprintf("/bin/sh %s", vars.WorkSpace+"docker/docker.sh"))
 	// todo 暂时无法后台运行，重新考虑
@@ -107,8 +107,9 @@ func RunInstall() {
 	runInNode(nodes, WgetCom(pkgUrl, vars.PkgName))
 	// 解压包
 	runInNode(nodes, TarX(vars.PkgName, vars.WorkSpace))
-	runInNode(nodes, fmt.Sprintf("docker load -i %s", vars.WorkSpace+"docker/docker.tar"))
-
+	// 获取某目录下所需要的文件
+	list := getNodesSource(nodes, vars.WorkSpace+"docker/", "tar")
+	DockerLoader(nodes, list)
 }
 
 func runInMaster(name string, args []string) {
@@ -128,6 +129,51 @@ func runInNode(nodes []string, arg string) {
 		err := ssh.CmdAsync(nodeIp, arg)
 		if err != nil {
 			glog.Error(err.Error())
+		}
+	}
+}
+
+/**
+cd 目录
+suffix 后缀
+dataList 节点列表所获取到的文件列表[][]
+*/
+func getNodesSource(nodes []string, cd string, suffix string) (dataList [][]string) {
+	for _, nodeIp := range nodes {
+		ssh := utils.SSH{
+			User:       vars.SSHConfig.User,
+			Password:   vars.SSHConfig.Password,
+			PkFile:     vars.SSHConfig.PrivateKeyPath,
+			PkPassword: "",
+			Timeout:    nil,
+		}
+		//_ = ssh.CmdInServer(nodeIp, MkdirCom(vars.WorkSpace))
+		data := ssh.CmdInServer(nodeIp, fmt.Sprintf("cd %s && ls", cd))
+		list := utils.FindFileList(data, suffix)
+		dataList = append(dataList, list)
+	}
+	return dataList
+}
+
+/**
+
+ */
+
+func DockerLoader(nodes []string, tarList [][]string) {
+	for index, nodeIp := range nodes {
+		ssh := utils.SSH{
+			User:       vars.SSHConfig.User,
+			Password:   vars.SSHConfig.Password,
+			PkFile:     vars.SSHConfig.PrivateKeyPath,
+			PkPassword: "",
+			Timeout:    nil,
+		}
+		for _, tar := range tarList[index] {
+			err := ssh.CmdAsync(nodeIp, fmt.Sprintf("docker load -i %s", vars.WorkSpace+"/docker/"+tar))
+			if err != nil {
+				glog.Error(err)
+				os.Exit(vars.ErrorExitOSCase)
+			}
 		}
 	}
 }
