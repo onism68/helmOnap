@@ -94,7 +94,7 @@ func RunInstall() {
 	// todo 暂时无法后台运行，重新考虑
 	//sshMaster.CmdInServer(vars.MasterIp, "helm serve >> out.txt 2>&1 &")
 
-	//sshMaster.CmdInMaster(HelmInstall(VFC + " --set global.masterPassword=onap"))
+	////sshMaster.CmdInMaster(HelmInstall(VFC + " --set global.masterPassword=onap"))
 	//return
 
 	// 下载包，配置本地文件服务器地址

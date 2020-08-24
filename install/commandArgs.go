@@ -19,11 +19,11 @@ type HelmInstallFile string
 const VFC HelmInstallFile = "vfc"
 const AAI HelmInstallFile = "aai"
 const MSB HelmInstallFile = "msb"
-const CATALOG HelmInstallFile = "modeling"
+const MODELING HelmInstallFile = "modeling"
 const CASSANDRA HelmInstallFile = "cassandra"
 const UUI HelmInstallFile = "uui"
 const MULTICLOUD HelmInstallFile = "multicloud"
-const mariadb HelmInstallFile = "mariadb-galera"
+const MARIADB HelmInstallFile = "mariadb-galera"
 const ESR HelmInstallFile = "esr"
 
 func MkdirCom(dir string) string {
@@ -50,6 +50,26 @@ func Chmod(mod string, path string) string {
 	return fmt.Sprintf(chmod, mod, path)
 }
 
-func HelmInstall(install HelmInstallFile) string {
-	return fmt.Sprintf("helm --namespace onap install %s/onap/charts/%s", vars.WorkSpace, install)
+func HelmInstall(install HelmInstallFile, arg string) string {
+	return fmt.Sprintf("helm --namespace onap install %s/onap/charts/%s %s", vars.WorkSpace, install, arg)
+}
+
+func InstallVFC() string {
+	return HelmInstall(VFC, "--name dev-vfc")
+}
+
+func InstallModeling() string {
+	return HelmInstall(MODELING, "--name dev-modeling --set global.masterPassword=onap")
+}
+
+func InstallAAI() string {
+	return HelmInstall(AAI, "--name dev-aai")
+}
+
+func InstallMsb() string {
+	return HelmInstall(MSB, "--name dev-msb")
+}
+
+func InstallCassandra() string {
+	return HelmInstall(CASSANDRA, "--name dev-cassandra")
 }
