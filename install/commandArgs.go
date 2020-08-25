@@ -73,3 +73,14 @@ func InstallMsb() string {
 func InstallCassandra() string {
 	return HelmInstall(CASSANDRA, "--name dev-cassandra")
 }
+
+func InstallMulticloud() string {
+	return HelmInstall(MULTICLOUD, "--name dev-multicloud")
+}
+
+func InstallEsr() string {
+	return HelmInstall(ESR, "--name dev-esr")
+}
+func InstallUUI() string {
+	return HelmInstall(UUI, "--name dev-uui")
+}

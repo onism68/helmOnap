@@ -39,7 +39,7 @@ func RunInstall() {
 	//通过ssh链接本地
 	sshMaster := utils.SSH{
 		User:     "root",
-		Password: "0222",
+		Password: "0000",
 		//PkFile:     "/root/.ssh/id_rsa",
 		PkPassword: "",
 		Timeout:    nil,
@@ -48,7 +48,7 @@ func RunInstall() {
 	sshMaster.CmdInMaster(MkdirCom(vars.WorkSpace))
 
 	//sshMaster.CmdInMaster(TarX(vars.PkgPath+vars.PkgName, vars.WorkSpace))
-	//sshMaster.CmdInMaster(TarX(vars.WorkSpace + "onap-f-6.0.0.tgz", vars.WorkSpace))
+	//sshMaster.CmdInMaster(TarX(vars.WorkSpace + "onap-6.0.0.tgz", vars.WorkSpace))
 
 	sshMaster.CmdInMaster(Cpr(vars.WorkSpace+"/helm/helm", "/usr/local/bin/"))
 	sshMaster.CmdInMaster(Chmod("+x", "/usr/local/bin/helm"))
@@ -110,6 +110,16 @@ func RunInstall() {
 	// 获取某目录下所需要的文件
 	list := getNodesSource(nodes, vars.WorkSpace+"docker/", "tar")
 	DockerLoader(nodes, list)
+
+	sshMaster.CmdInMaster(InstallMsb())
+	sshMaster.CmdInMaster(InstallCassandra())
+	sshMaster.CmdInMaster(InstallAAI())
+	sshMaster.CmdInMaster(InstallVFC())
+	sshMaster.CmdInMaster(InstallModeling())
+	sshMaster.CmdInMaster(InstallMulticloud())
+	return
+	sshMaster.CmdInMaster(InstallEsr())
+	sshMaster.CmdInMaster(InstallUUI())
 }
 
 func runInMaster(name string, args []string) {
