@@ -37,7 +37,7 @@ func init() {
 	// todo 读取配置文件，更新
 	initCmd.Flags().StringVar(&vars.SSHConfig.User, "user", "root", "servers user name for ssh")
 	initCmd.Flags().StringVar(&vars.SSHConfig.Password, "password", "0222", "servers user password for ssh")
-	initCmd.Flags().StringVar(&vars.SSHConfig.PrivateKeyPath, "PrivateKeyPath", "/root/.ssh/id_rsa", "private key for ssh")
+	//initCmd.Flags().StringVar(&vars.SSHConfig.PrivateKeyPath, "PrivateKeyPath", "/root/.ssh/id_rsa", "private key for ssh")
 
 	initCmd.Flags().StringVar(&vars.PkgPath, "pkgPath", "/root/helmOnap/xxx.tar.gz", "path of pkg ex. /root/helmOnap/test.tar.gz")
 	initCmd.Flags().StringVar(&vars.MasterIp, "masterIp", "192.168.0.2", "kubernetes multi-masters ex. 192.168.0.2")
@@ -46,5 +46,6 @@ func init() {
 	initCmd.MarkFlagRequired("masterIp")
 	initCmd.MarkFlagRequired("nodeIps")
 	initCmd.MarkFlagRequired("pkgPath")
+	initCmd.MarkFlagRequired("password")
 
 }
