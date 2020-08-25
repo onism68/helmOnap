@@ -6,7 +6,7 @@ import (
 	"github.com/onism68/helmOnap/vars"
 )
 
-func PullImage() {
+func PullOrSaveImage(pull bool) {
 	sshMaster := SSH{
 		User:     vars.SSHConfig.User,
 		Password: vars.SSHConfig.Password,
@@ -21,11 +21,13 @@ func PullImage() {
 	}
 	lens := len(vars.ImagesList)
 	for index, item := range vars.ImagesList {
-		glog.Infof("----pulled %d, sum %d----", index, lens)
-		sshMaster.CmdInMaster(fmt.Sprintf("docker pull %s", item))
+		if pull {
+			glog.Infof("----pulled %d, sum %d----", index, lens)
+			sshMaster.CmdInMaster(fmt.Sprintf("docker pull %s", item))
+		} else {
+			// todo docker save
+			panic("docker save 未实现")
+		}
+
 	}
-}
-
-func SaveImage() {
-
 }

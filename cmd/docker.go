@@ -14,11 +14,7 @@ var dockerCmd = &cobra.Command{
 		//
 	},
 	PostRun: func(cmd *cobra.Command, args []string) {
-		if vars.DockerPull {
-			utils.PullImage()
-		} else {
-			utils.SaveImage()
-		}
+		utils.PullOrSaveImage(vars.DockerPull)
 	},
 }
 
