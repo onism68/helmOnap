@@ -137,5 +137,6 @@ func (ss *SSH) CmdInMaster(args string) {
 	err := ss.CmdAsync(vars.MasterIp, args)
 	if err != nil {
 		glog.Error(err)
+		os.Exit(vars.ErrorExitOSCase)
 	}
 }

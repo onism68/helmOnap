@@ -9,7 +9,9 @@ var (
 	PkgName         = ""
 	WorkSpace       = "/tmp/workSpaceTmp/"
 	ErrorExitOSCase = -1 // 错误直接退出类型
-
+	ImagesListFile  string
+	ImagesList      []string
+	DockerPull      bool = true
 )
 
 var SSHConfig struct {
