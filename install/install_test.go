@@ -26,9 +26,17 @@ func Test_runInNode(t *testing.T) {
 		PkPassword: "",
 		Timeout:    nil,
 	}
-	sshMaster.CmdInServer(vars.MasterIp, "helm serve &")
+	//sshMaster.CmdInServer(vars.MasterIp, "helm serve &")
+	//return
+	nodes := []string{"172.21.80.101", "172.21.80.102"}
+	nodes = append(nodes, vars.MasterIp)
+	lenNodes := len(nodes)
+	fmt.Println(nodes)
+	fmt.Println(nodes[:lenNodes-1])
+	fmt.Println(nodes[lenNodes:])
+	nodes = append(nodes[:lenNodes-1], nodes[lenNodes:]...)
+	fmt.Println(nodes)
 	return
-	//nodes := []string{"172.21.80.101", "172.21.80.102"}
 	//list := getNodesSource(nodes, vars.WorkSpace+"docker/", "tar")
 	//DockerLoader(nodes, list)
 	//return

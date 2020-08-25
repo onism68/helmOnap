@@ -108,9 +108,10 @@ func RunInstall() {
 	// 解压包
 	runInNode(nodes, TarX(vars.PkgName, vars.WorkSpace))
 	// 获取某目录下所需要的文件
+	nodes = append(nodes, vars.MasterIp)
 	list := getNodesSource(nodes, vars.WorkSpace+"docker/", "tar")
 	DockerLoader(nodes, list)
-
+	nodes = append(nodes[:len(nodes)-1])
 	sshMaster.CmdInMaster(InstallMsb())
 	sshMaster.CmdInMaster(InstallCassandra())
 	sshMaster.CmdInMaster(InstallAAI())
