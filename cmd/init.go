@@ -12,7 +12,7 @@ import (
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "init",
-	Long:  "init",
+	Long:  "init helm and onap",
 	Run: func(cmd *cobra.Command, args []string) {
 		//
 	},
@@ -36,7 +36,7 @@ func init() {
 
 	// todo 读取配置文件，更新
 	initCmd.Flags().StringVar(&vars.SSHConfig.User, "user", "root", "servers user name for ssh")
-	initCmd.Flags().StringVar(&vars.SSHConfig.Password, "password", "0222", "servers user password for ssh")
+	initCmd.Flags().StringVar(&vars.SSHConfig.Password, "password", "0000", "servers user password for ssh")
 	//initCmd.Flags().StringVar(&vars.SSHConfig.PrivateKeyPath, "PrivateKeyPath", "/root/.ssh/id_rsa", "private key for ssh")
 
 	initCmd.Flags().StringVar(&vars.PkgPath, "pkgPath", "/root/helmOnap/xxx.tar.gz", "path of pkg ex. /root/helmOnap/test.tar.gz")

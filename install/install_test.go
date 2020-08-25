@@ -17,15 +17,17 @@ func TestRunInstall(t *testing.T) {
 
 func Test_runInNode(t *testing.T) {
 	vars.SSHConfig.User = "root"
-	vars.SSHConfig.Password = "0222"
+	vars.SSHConfig.Password = "0000"
 	vars.MasterIp = "172.21.80.101"
 	sshMaster := utils.SSH{
 		User:     "root",
-		Password: "0222",
+		Password: "0000",
 		//PkFile:     "/root/.ssh/id_rsa",
 		PkPassword: "",
 		Timeout:    nil,
 	}
+	sshMaster.CmdInServer(vars.MasterIp, "helm serve &")
+	return
 	//nodes := []string{"172.21.80.101", "172.21.80.102"}
 	//list := getNodesSource(nodes, vars.WorkSpace+"docker/", "tar")
 	//DockerLoader(nodes, list)

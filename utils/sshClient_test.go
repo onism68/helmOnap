@@ -9,7 +9,7 @@ import (
 func TestSSH_Connect(t *testing.T) {
 	ssh := SSH{
 		User:     "root",
-		Password: "0222",
+		Password: "0000",
 		//PkFile:     "/root/.ssh/id_rsa",
 		PkPassword: "",
 		Timeout:    nil,

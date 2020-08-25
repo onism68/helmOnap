@@ -1,4 +1,4 @@
-port = 8199
+port = 8196
 
 # Logger.
 [logger]
@@ -9,7 +9,7 @@ port = 8199
 # SSHConfig
 [SSHConfig]
     User    = "root"
-    Password = ""
+    Password = "0000"
     PrivateKey = "/root/.ssh/id_rsa"
 # Pkg
 [Pkg]
