@@ -178,12 +178,15 @@ func DockerLoader(nodes []string, tarList [][]string) {
 			PkPassword: "",
 			Timeout:    nil,
 		}
-		for _, tar := range tarList[index] {
-			err := ssh.CmdAsync(nodeIp, fmt.Sprintf("docker load -i %s", vars.WorkSpace+"/docker/"+tar))
-			if err != nil {
-				glog.Error(err)
-				os.Exit(vars.ErrorExitOSCase)
+		go func(nodeIp string, index int) {
+			for _, tar := range tarList[index] {
+				err := ssh.CmdAsync(nodeIp, fmt.Sprintf("docker load -i %s", vars.WorkSpace+"/docker/"+tar))
+				if err != nil {
+					glog.Error(err)
+					os.Exit(vars.ErrorExitOSCase)
+				}
 			}
-		}
+		}(nodeIp, index)
+
 	}
 }
