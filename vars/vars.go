@@ -7,7 +7,7 @@ var (
 	NodeIps         []string
 	PkgPath         = "/root/workSpaceTmp/"
 	PkgName         = ""
-	WorkSpace       = "/root/workSpaceTmp/"
+	WorkSpace       = "/tmp/workSpaceTmp/"
 	ErrorExitOSCase = -1 // 错误直接退出类型
 
 )
