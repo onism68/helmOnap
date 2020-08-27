@@ -11,7 +11,7 @@ var (
 	ErrorExitOSCase = -1 // 错误直接退出类型
 	ImagesListFile  string
 	ImagesList      []string
-	DockerPull      bool = true
+	DockerPull      bool
 )
 
 var SSHConfig struct {

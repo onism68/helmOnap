@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"github.com/gogf/gf/os/glog"
 	"github.com/onism68/helmOnap/vars"
+	"strings"
 )
 
-func PullOrSaveImage(pull bool) {
+func PullOrSaveImage() {
 	sshMaster := SSH{
 		User:     vars.SSHConfig.User,
 		Password: vars.SSHConfig.Password,
@@ -20,13 +21,28 @@ func PullOrSaveImage(pull bool) {
 		glog.Error(err.Error())
 	}
 	lens := len(vars.ImagesList)
+	ifMkdir := true
 	for index, item := range vars.ImagesList {
-		if pull {
+		glog.Info(vars.DockerPull)
+		if vars.DockerPull {
 			glog.Infof("----pulled %d, sum %d----", index, lens)
 			sshMaster.CmdInMaster(fmt.Sprintf("docker pull %s", item))
 		} else {
-			// todo docker save
-			panic("docker save 未实现")
+			if ifMkdir {
+				sshMaster.CmdInMaster("mkdir images")
+				ifMkdir = false
+			}
+			var nameTmp string
+			if strings.Contains(item, "/") {
+				nameTmpList := strings.Split(item, "/")
+				nameTmp = nameTmpList[len(nameTmpList)-1]
+				nameTmp = strings.Replace(nameTmp, ":", "-", -1)
+			} else {
+				nameTmp = item
+				nameTmp = strings.Replace(nameTmp, ":", "-", -1)
+			}
+			glog.Infof("-----image ifno: ( %s )", nameTmp)
+			sshMaster.CmdInMaster(fmt.Sprintf("docker save %s > ./images/%s.tar", item, nameTmp))
 		}
 
 	}
