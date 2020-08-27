@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"github.com/gogf/gf/os/glog"
+	"github.com/gogf/gf/util/grand"
 	"github.com/onism68/helmOnap/vars"
 	"strings"
 )
@@ -42,7 +43,7 @@ func PullOrSaveImage() {
 				nameTmp = strings.Replace(nameTmp, ":", "-", -1)
 			}
 			glog.Infof("-----image ifno: ( %s )", nameTmp)
-			sshMaster.CmdInMaster(fmt.Sprintf("docker save %s > ./images/%s.tar", item, nameTmp))
+			sshMaster.CmdInMaster(fmt.Sprintf("docker save %s > ./images/%s.tar", item, nameTmp+grand.Letters(5)))
 		}
 
 	}
