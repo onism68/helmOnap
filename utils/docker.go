@@ -17,17 +17,19 @@ func PullOrSaveImage() {
 		Timeout:    nil,
 	}
 	glog.Info(sshMaster)
-	err := ReadFile2List(vars.ImagesListFile)
+	err := ReadFile2List(vars.ImagesListFile, &vars.ImagesList)
 	if err != nil {
 		glog.Error(err.Error())
 	}
 	lens := len(vars.ImagesList)
 	ifMkdir := true
+	var tmpList []string
 	for index, item := range vars.ImagesList {
 		glog.Info(vars.DockerPull)
 		if vars.DockerPull {
 			glog.Infof("----pulled %d, sum %d----", index, lens)
 			sshMaster.CmdInMaster(fmt.Sprintf("docker pull %s", item))
+			tmpList = append(tmpList, item+"\n")
 		} else {
 			if ifMkdir {
 				sshMaster.CmdInMaster("mkdir images")
@@ -43,8 +45,10 @@ func PullOrSaveImage() {
 				nameTmp = strings.Replace(nameTmp, ":", "-", -1)
 			}
 			glog.Infof("-----image ifno: ( %s )", nameTmp)
-			sshMaster.CmdInMaster(fmt.Sprintf("docker save %s > ./images/%s.tar", item, nameTmp+grand.Letters(5)))
+			saveImageName := nameTmp + grand.Letters(5)
+			sshMaster.CmdInMaster(fmt.Sprintf("docker save %s > ./images/%s.tar", item, saveImageName))
+			tmpList = append(tmpList, saveImageName+"\n")
 		}
-
 	}
+	glog.Info(tmpList)
 }
