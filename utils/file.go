@@ -5,7 +5,6 @@ import (
 	"github.com/gogf/gf/os/gfile"
 	"github.com/gogf/gf/os/glog"
 	"github.com/gogf/gf/text/gregex"
-	"github.com/onism68/helmOnap/vars"
 )
 
 func FindFileList(byte []byte, suffix string) []string {
@@ -20,12 +19,12 @@ func FindFileList(byte []byte, suffix string) []string {
 	return fileList
 }
 
-// 以下两个功能缺陷
-//todo 重写
-func ReadFile2List(file string) error {
-	return gfile.ReadByteLines(file, byte2List)
-}
-
-func byte2List(byte []byte) {
-	vars.ImagesList = append(vars.ImagesList, string(byte))
+/**
+ * file file路径
+ * retList list
+ */
+func ReadFile2List(file string, retList *[]string) error {
+	return gfile.ReadByteLines(file, func(bytes []byte) {
+		*retList = append(*retList, string(bytes))
+	})
 }

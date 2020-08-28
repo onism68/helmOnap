@@ -9,7 +9,7 @@ import (
 
 func TestReadFile(t *testing.T) {
 	file := "../images.list"
-	err := ReadFile2List(file)
+	err := ReadFile2List(file, &vars.ImagesList)
 	if err != nil {
 		glog.Error(err)
 	}
