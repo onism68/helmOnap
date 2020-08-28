@@ -35,11 +35,14 @@ func RunInstall() {
 	//runInMaster("helm", []string{fmt.Sprintf("serve %s", "&")})
 
 	//return
-
+	// 配置本地文件服务器地址
+	port := g.Cfg().GetString("port")
+	nodes := utils.ParseIPs(vars.NodeIps)
+	pkgUrl := fmt.Sprintf("http://%s:%s/%s", vars.MasterIp, port, vars.PkgName)
 	//通过ssh链接本地
 	sshMaster := utils.SSH{
-		User:     "root",
-		Password: "0000",
+		User:     vars.SSHConfig.User,
+		Password: vars.SSHConfig.Password,
 		//PkFile:     "/root/.ssh/id_rsa",
 		PkPassword: "",
 		Timeout:    nil,
@@ -48,11 +51,26 @@ func RunInstall() {
 	sshMaster.CmdInMaster(MkdirCom(vars.WorkSpace))
 
 	sshMaster.CmdInMaster(TarX(vars.PkgPath+vars.PkgName, vars.WorkSpace))
-	sshMaster.CmdInMaster(TarX(vars.WorkSpace+"onap-6.0.0.tgz", vars.WorkSpace))
-
+	// oom make好的文件
+	sshMaster.CmdInMaster(MkdirCom(vars.WorkSpace + "oom"))
+	sshMaster.CmdInMaster(TarX(vars.WorkSpace+"oom-onap-f-IfNot.tar.gz", vars.WorkSpace+"oom"))
+	// 安装helm，配置权限
 	sshMaster.CmdInMaster(Cpr(vars.WorkSpace+"/helm/helm", "/usr/local/bin/"))
 	sshMaster.CmdInMaster(Chmod("+x", "/usr/local/bin/helm"))
 
+	//资源分发，下面安装tiller需要镜像，所以先进行资源分发
+	// 下载包
+	// 创建目录
+	runInNode(nodes, MkdirCom(vars.WorkSpace))
+	// 下载包
+	runInNode(nodes, WgetCom(pkgUrl, vars.PkgName))
+	// 解压包
+	runInNode(nodes, TarX(vars.PkgName, vars.WorkSpace))
+	// 先load tiller镜像
+	loadTiller := "docker load -i " + vars.WorkSpace + "/helm/tiller-v2.16.6.tar"
+	// tiller相关
+	sshMaster.CmdInMaster(loadTiller)
+	runInNode(nodes, loadTiller)
 	sshMaster.CmdInMaster("kubectl create serviceaccount --namespace=kube-system tiller")
 	sshMaster.CmdInMaster("kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin " +
 		"--serviceaccount=kube-system:tiller")
@@ -67,7 +85,7 @@ func RunInstall() {
 	}
 	forTimes := 0
 	for readyList[1] != readyList[2] {
-		glog.Info("tiller 服务未就绪")
+		glog.Info(utils.CmdTips("tiller 服务未就绪"))
 		tillerInfo := sshMaster.CmdInServer(vars.MasterIp, "kubectl get pods -n kube-system | grep tiller")
 		readyList, err = gregex.MatchString(`(\d+)\/(\d+)`, string(tillerInfo))
 		if err != nil {
@@ -76,11 +94,11 @@ func RunInstall() {
 		time.Sleep(time.Second)
 		forTimes++
 		if forTimes > 60 {
-			glog.Error("tiller 服务持续未就绪，exit")
+			glog.Error(utils.CmdTips("tiller 服务持续未就绪，exit"))
 			os.Exit(vars.ErrorExitOSCase)
 		}
 	}
-	glog.Info("tiller 服务已就绪，进行后续操作")
+	glog.Info(utils.CmdTips("tiller 服务已就绪，进行后续操作"))
 	//sshMaster.CmdInMaster("helm repo remove stable")
 	sshMaster.CmdInMaster(Cpr(vars.WorkSpace+"helm/plugins", "~/.helm/"))
 	//sshMaster.CmdInMaster("helm create namespace onap")
@@ -96,30 +114,41 @@ func RunInstall() {
 	////sshMaster.CmdInMaster(HelmInstall(VFC + " --set global.masterPassword=onap"))
 	//return
 
-	// 下载包，配置本地文件服务器地址
-	port := g.Cfg().GetString("port")
-	nodes := utils.ParseIPs(vars.NodeIps)
-	pkgUrl := fmt.Sprintf("http://%s:%s/%s", vars.MasterIp, port, vars.PkgName)
-	// 创建目录
-	runInNode(nodes, MkdirCom(vars.WorkSpace))
-	// 下载包
-	runInNode(nodes, WgetCom(pkgUrl, vars.PkgName))
-	// 解压包
-	runInNode(nodes, TarX(vars.PkgName, vars.WorkSpace))
 	// 获取某目录下所需要的文件
 	nodes = append(nodes, vars.MasterIp)
 	list := getNodesSource(nodes, vars.WorkSpace+"docker/", "tar")
 	DockerLoader(nodes, list)
 	nodes = append(nodes[:len(nodes)-1])
+	glog.Info(utils.CmdTips("install msb"))
 	sshMaster.CmdInMaster(InstallMsb())
+
+	glog.Info(utils.CmdTips("install cassandra"))
 	sshMaster.CmdInMaster(InstallCassandra())
+
+	glog.Info(utils.CmdTips("install AAI"))
 	sshMaster.CmdInMaster(InstallAAI())
+
+	glog.Info(utils.CmdTips("install VFC"))
 	sshMaster.CmdInMaster(InstallVFC())
+
+	glog.Info(utils.CmdTips("install Modeling"))
 	sshMaster.CmdInMaster(InstallModeling())
+
+	glog.Info(utils.CmdTips("install Multicloud"))
 	sshMaster.CmdInMaster(InstallMulticloud())
-	return
+
+	glog.Info(utils.CmdTips("install ESR"))
 	sshMaster.CmdInMaster(InstallEsr())
+
+	glog.Info(utils.CmdTips("install UUI"))
 	sshMaster.CmdInMaster(InstallUUI())
+
+}
+
+func CleanWorkSpace() {
+	nodes := utils.ParseIPs(vars.NodeIps)
+	nodes = append(nodes, vars.MasterIp)
+	runInNode(nodes, "rm -rf %s"+vars.WorkSpace)
 }
 
 func runInMaster(name string, args []string) {
