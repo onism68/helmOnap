@@ -28,6 +28,9 @@ var initCmd = &cobra.Command{
 
 		//	开始安装
 		install.RunInstall()
+
+		//	清理痕迹
+		install.CleanWorkSpace()
 	},
 }
 
