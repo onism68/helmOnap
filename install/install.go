@@ -47,18 +47,17 @@ func RunInstall() {
 	//创建工作目录
 	sshMaster.CmdInMaster(MkdirCom(vars.WorkSpace))
 
-	//sshMaster.CmdInMaster(TarX(vars.PkgPath+vars.PkgName, vars.WorkSpace))
-	//sshMaster.CmdInMaster(TarX(vars.WorkSpace + "onap-6.0.0.tgz", vars.WorkSpace))
+	sshMaster.CmdInMaster(TarX(vars.PkgPath+vars.PkgName, vars.WorkSpace))
+	sshMaster.CmdInMaster(TarX(vars.WorkSpace+"onap-6.0.0.tgz", vars.WorkSpace))
 
 	sshMaster.CmdInMaster(Cpr(vars.WorkSpace+"/helm/helm", "/usr/local/bin/"))
 	sshMaster.CmdInMaster(Chmod("+x", "/usr/local/bin/helm"))
 
-	//sshMaster.CmdInMaster("kubectl create serviceaccount --namespace=kube-system tiller")
-	//sshMaster.CmdInMaster("kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin " +
-	//	"--serviceaccount=kube-system:tiller")
-	//sshMaster.CmdInMaster("helm init --upgrade -i registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.16.6 " +
-	//	"--stable-repo-url http://mirror.azure.cn/kubernetes/charts/ --service-account=tiller")
-	//
+	sshMaster.CmdInMaster("kubectl create serviceaccount --namespace=kube-system tiller")
+	sshMaster.CmdInMaster("kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin " +
+		"--serviceaccount=kube-system:tiller")
+	sshMaster.CmdInMaster("helm init --upgrade -i registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.16.6 " +
+		"--stable-repo-url http://mirror.azure.cn/kubernetes/charts/ --service-account=tiller")
 
 	// 检查tiller服务是否就绪
 	tillerInfo := sshMaster.CmdInServer(vars.MasterIp, "kubectl get pods -n kube-system | grep tiller")
