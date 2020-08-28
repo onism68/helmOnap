@@ -51,7 +51,8 @@ func Chmod(mod string, path string) string {
 }
 
 func HelmInstall(install HelmInstallFile, arg string) string {
-	return fmt.Sprintf("helm --namespace onap install %s/onap/charts/%s %s", vars.WorkSpace, install, arg)
+	// todo 自定义版本
+	return fmt.Sprintf("helm --namespace onap install %soom/%s-6.0.0.tgz %s", vars.WorkSpace, install, arg)
 }
 
 func InstallVFC() string {
