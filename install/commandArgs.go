@@ -56,7 +56,7 @@ func HelmInstall(install HelmInstallFile, arg string) string {
 }
 
 func InstallVFC() string {
-	return HelmInstall(VFC, "--name dev-vfc")
+	return HelmInstall(VFC, "--name dev-vfc --set global.masterPassword=onap")
 }
 
 func InstallModeling() string {
