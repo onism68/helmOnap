@@ -148,7 +148,7 @@ func RunInstall() {
 func CleanWorkSpace() {
 	nodes := utils.ParseIPs(vars.NodeIps)
 	nodes = append(nodes, vars.MasterIp)
-	runInNode(nodes, "rm -rf %s"+vars.WorkSpace)
+	runInNode(nodes, fmt.Sprintf("rm -rf %s", vars.WorkSpace))
 }
 
 func runInMaster(name string, args []string) {
