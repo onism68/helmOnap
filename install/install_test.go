@@ -40,7 +40,7 @@ func Test_runInNode(t *testing.T) {
 	//list := getNodesSource(nodes, vars.WorkSpace+"docker/", "tar")
 	//DockerLoader(nodes, list)
 	//return
-	//runInNode([]string{"172.21.80.101"}, CdCom(vars.WorkSpace))
+	//runInNode([]string{"172.21.80.101"}, Cd(vars.WorkSpace))
 
 	t1 := sshMaster.CmdInServer(vars.MasterIp, "cd workSpaceTmp/docker && ls")
 	//fmt.Println(string(t1))
@@ -56,7 +56,7 @@ func Test_runInNode(t *testing.T) {
 	}
 	fmt.Println(fileList)
 	return
-	//runInNode([]string{"172.21.80.101"}, WgetCom("172.21.80.1:8199/main.exe"))
+	//runInNode([]string{"172.21.80.101"}, Wget("172.21.80.1:8199/main.exe"))
 
 	// 检查tiller服务是否就绪
 	tmp := sshMaster.CmdInServer(vars.MasterIp, "kubectl get pods -n kube-system | grep tiller")

@@ -26,15 +26,15 @@ const MULTICLOUD HelmInstallFile = "multicloud"
 const MARIADB HelmInstallFile = "mariadb-galera"
 const ESR HelmInstallFile = "esr"
 
-func MkdirCom(dir string) string {
+func Mkdir(dir string) string {
 	return fmt.Sprintf(mkdir, dir)
 }
 
-func CdCom(path string) string {
+func Cd(path string) string {
 	return fmt.Sprintf(cd, path)
 }
 
-func WgetCom(url string, name string) string {
+func Wget(url string, name string) string {
 	return fmt.Sprintf(wget, url, name)
 }
 

@@ -48,11 +48,11 @@ func RunInstall() {
 		Timeout:    nil,
 	}
 	//创建工作目录
-	sshMaster.CmdInMaster(MkdirCom(vars.WorkSpace))
+	sshMaster.CmdInMaster(Mkdir(vars.WorkSpace))
 
 	sshMaster.CmdInMaster(TarX(vars.PkgPath+vars.PkgName, vars.WorkSpace))
 	// oom make好的文件
-	sshMaster.CmdInMaster(MkdirCom(vars.WorkSpace + "oom"))
+	sshMaster.CmdInMaster(Mkdir(vars.WorkSpace + "oom"))
 	sshMaster.CmdInMaster(TarX(vars.WorkSpace+"oom-onap-f-IfNot.tar.gz", vars.WorkSpace+"oom"))
 	// 安装helm，配置权限
 	sshMaster.CmdInMaster(Cpr(vars.WorkSpace+"/helm/helm", "/usr/local/bin/"))
@@ -61,14 +61,14 @@ func RunInstall() {
 	//资源分发，下面安装tiller需要镜像，所以先进行资源分发
 	// 下载包
 	// 创建目录
-	runInNode(nodes, MkdirCom(vars.WorkSpace))
+	runInNode(nodes, Mkdir(vars.WorkSpace))
 	// 下载包
-	runInNode(nodes, WgetCom(pkgUrl, vars.PkgName))
+	runInNode(nodes, Wget(pkgUrl, vars.PkgName))
 	// 解压包
 	runInNode(nodes, TarX(vars.PkgName, vars.WorkSpace))
 	// 先load tiller镜像
 	loadTiller := "docker load -i " + vars.WorkSpace + "/helm/tiller-v2.16.6.tar"
-	// tiller相关
+	// 安装配置tiller相关
 	sshMaster.CmdInMaster(loadTiller)
 	runInNode(nodes, loadTiller)
 	sshMaster.CmdInMaster("kubectl create serviceaccount --namespace=kube-system tiller")
@@ -164,7 +164,7 @@ func runInNode(nodes []string, arg string) {
 			PkPassword: "",
 			Timeout:    nil,
 		}
-		//_ = ssh.CmdInServer(nodeIp, MkdirCom(vars.WorkSpace))
+		//_ = ssh.CmdInServer(nodeIp, Mkdir(vars.WorkSpace))
 		err := ssh.CmdAsync(nodeIp, arg)
 		if err != nil {
 			glog.Error(err.Error())
@@ -186,7 +186,7 @@ func getNodesSource(nodes []string, cd string, suffix string) (dataList [][]stri
 			PkPassword: "",
 			Timeout:    nil,
 		}
-		//_ = ssh.CmdInServer(nodeIp, MkdirCom(vars.WorkSpace))
+		//_ = ssh.CmdInServer(nodeIp, Mkdir(vars.WorkSpace))
 		data := ssh.CmdInServer(nodeIp, fmt.Sprintf("cd %s && ls", cd))
 		list := utils.FindFileList(data, suffix)
 		dataList = append(dataList, list)
