@@ -2,18 +2,18 @@ package utils
 
 import (
 	"fmt"
-	"github.com/gogf/gf/os/glog"
 )
 
 func CmdTips(tip string) string {
-	l := "------------------------------ \n"
+	l := "============================== \n"
+	//l := "------------------------------ \n"
 	t := "                               "
 
 	lenTip := showStrLen(tip)
-	glog.Println(lenTip)
+	//glog.Println(lenTip)
 	if lenTip <= 28 {
-		glog.Info(15 - lenTip/2)
-		tip = string(t[1:15-lenTip/2]) + tip
+		//glog.Info(15 - lenTip/2)
+		tip = t[1:15-lenTip/2] + tip
 	}
 	return fmt.Sprintf("\n"+l+"%s\n"+l, tip)
 }
